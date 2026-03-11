@@ -4,8 +4,9 @@ from dataclasses import dataclass
 def _size_str_to_int(size: str) -> int:
     """
     Convert string notation of megabytes (e.g. 214.7M) to an integer value representing bytes (e.g. 225129267).
+    
     :param size: String notation, megabytes (e.g. 214.7M)
-    :returns: An integer value representing bytes (e.g. 225129267)
+    :return: An integer value representing bytes (e.g. 225129267)
     """
     if size[-1] != "M":
         raise ValueError(f"Unsupported size suffix: {size[-1]} ({size})")

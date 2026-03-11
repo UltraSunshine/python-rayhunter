@@ -13,7 +13,8 @@ class RayhunterApi:
     def active_recording(self) -> bool:
         """
         Check the manifest file to determine if there's a recording in progress.
-        :returns: True if there's a "current_entry" in the manifest, else False
+
+        :return: True if there's a "current_entry" in the manifest, else False
         """
         manifest = self.get_manifest()
         return manifest.current_entry is not None
@@ -24,8 +25,9 @@ class RayhunterApi:
     def _get_file_content(self, api_endpoint: str) -> bytes:
         """
         Stream a file from the given API endpoint into memory. 
+
         :param api_endpoint: The endpoint from which to retrieve a file
-        :returns: The contents of the file (bytes)
+        :return: The contents of the file (bytes)
         """
         file_content = io.BytesIO()
         file_url = urllib.parse.urljoin(self._url, api_endpoint)
@@ -40,7 +42,8 @@ class RayhunterApi:
     def get_manifest(self) -> QmdlManifest:
         """
         Fetch a copy of the QMDL manifest, used to track the names of previous and active recordings.
-        :returns: An instance of `QmdlManifest` populated from the target device
+
+        :return: An instance of `QmdlManifest` populated from the target device
         """
         manifest_url = urllib.parse.urljoin(self._url, "/api/qmdl-manifest")
         logging.info(f"Fetching manifest from: {manifest_url}")
@@ -51,8 +54,9 @@ class RayhunterApi:
     def get_analysis_report_file(self, filename: str) -> bytes:
         """
         Fetch a copy of the analysis report for a given capture. Use `get_manifest` to identify capture names.
+
         :param filename: The capture file name
-        :returns: The contents of the analysis report file (bytes)
+        :return: The contents of the analysis report file (bytes)
         """
         logging.info(f"Fetching analysis report for capture: {filename}")
         api_endpoint = f"/api/analysis-report/{filename}"
@@ -61,8 +65,9 @@ class RayhunterApi:
     def get_pcap_file(self, filename: str) -> bytes:
         """
         Fetch a copy of the pcap file for a given capture. PCAP is dynamically generated from QMDL by the Rayhunter binary when this API is called.
+
         :param filename: The capture file name (found in manifest)
-        :returns: The contents of the pcap file (bytes)
+        :return: The contents of the pcap file (bytes)
         """
         logging.info(f"Fetching PCAP file for capture: {filename}")
         api_endpoint = f"/api/pcap/{filename}"
@@ -71,8 +76,9 @@ class RayhunterApi:
     def get_qmdl_file(self, filename: str) -> bytes:
         """
         Fetch a copy of the given QMDL file. Use `get_manifest` to identify QMDL capture names.
+
         :param filenae: The QMDL file name (found in manifest)
-        :returns: The contents of the QMDL file (bytes)
+        :return: The contents of the QMDL file (bytes)
         """
         logging.info(f"Fetching QDML file for capture: {filename}")
         api_endpoint = f"/api/qmdl/{filename}"
@@ -99,7 +105,8 @@ class RayhunterApi:
     def system_stats(self):
         """
         Fetch disk and memory utilization stats from the API.
-        :returns: An instance of `SystemStats` populated from the target device.
+        
+        :return: An instance of `SystemStats` populated from the target device.
         """
         system_stats_url = urllib.parse.urljoin(self._url, "/api/system-stats")
         logging.info(f"Fetching system stats from: {system_stats_url}")
