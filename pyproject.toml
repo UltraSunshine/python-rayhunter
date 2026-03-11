@@ -29,7 +29,7 @@ optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
 [project.urls]
 Homepage = "https://github.com/UltraSunshine/python-rayhunter"
-Documentation = "https://github.com/UltraSunshine/python-rayhunter/tree/master/docs"
+Documentation = "https://python-rayhunter.readthedocs.io/en/latest/index.html"
 Repository = "https://github.com/UltraSunshine/python-rayhunter.git"
 "Bug Tracker" = "https://github.com/UltraSunshine/python-rayhunter/issues"
 
