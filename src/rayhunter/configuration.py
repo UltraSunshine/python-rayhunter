@@ -56,6 +56,14 @@ class Config:
     qmdl_store_path: str
     ui_level: int
 
+    def to_dict(self) -> dict:
+        """
+        Convert this thing back to a dict so it can be POSTed back to the device.
+        """
+        runtime_config = Config.__dict__.copy()
+        runtime_config["analyzers"] = runtime_config["analyzers"].__dict__
+        return runtime_config
+
     @staticmethod
     def from_dict(config: dict):
         config["analyzers"] = AnalyzerConfig.from_dict(config["analyzers"])

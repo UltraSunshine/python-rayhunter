@@ -22,6 +22,24 @@ class RayhunterApi:
         """
         manifest = self.get_manifest()
         return manifest.current_entry is not None
+    
+    @property
+    def configuration(self) -> Config:
+        """
+        Fetch the current runtime configuration from the target device.
+
+        :return: An instance of `Config` populated with the current runtime configuration.
+        """
+        return self.get_config()
+    
+    @configuration.setter
+    def configuration(self, config: Config):
+        """
+        Update the Rayhunter runtime configuration to the configuration specified in the supplied parameter. This triggers a reboot.
+
+        :param config: An instance of `Config` populated with the desired runtime configuration.
+        """
+        self.set_config(config)
 
     def __init__(self, hostname: str, port: int):
         self._url = f"http://{hostname}:{port}/"
@@ -110,6 +128,18 @@ class RayhunterApi:
         api_endpoint = f"/api/analysis-report/{filename}"
         return self._get_file_content(api_endpoint)
 
+    def get_config(self) -> Config:
+        """
+        Get the current runtime configuration for Rayhunter.
+
+        :return: An instance of `Config` populated from the target device.
+        """
+        config_url = urllib.parse.urljoin(self._url, "/api/config")
+        logging.info(f"Fetching configuration from: {config_url}")
+        response = requests.get(config_url)
+        response.raise_for_status()
+        return Config.from_dict(response.json())
+
     def get_manifest(self) -> QmdlManifest:
         """
         Fetch a copy of the QMDL manifest, used to track the names of previous and active recordings.
@@ -155,6 +185,20 @@ class RayhunterApi:
         response = requests.get(system_stats_url)
         response.raise_for_status()
         return SystemStats.from_dict(response.json())
+
+    def set_config(self, config: Config):
+        """
+        Update the Rayhunter runtime configuration to the supplied configuration options and trigger a reboot.
+
+        :param config: An instance of `Config` populated with the desired configuration options.
+        """
+        target_url = urllib.parse.urljoin(self._url, "/api/config")
+        logging.info(f"Updating device configuration using URL: {target_url}")
+        response = requests.post(
+            url=target_url,
+            json=config.to_dict()
+        )
+        response.raise_for_status()
 
     def start_recording(self):
         """
