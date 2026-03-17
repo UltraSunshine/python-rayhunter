@@ -1,3 +1,5 @@
+import copy
+
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -60,7 +62,7 @@ class Config:
         """
         Convert this thing back to a dict so it can be POSTed back to the device.
         """
-        runtime_config = Config.__dict__.copy()
+        runtime_config = copy.deepcopy(self.__dict__)
         runtime_config["analyzers"] = runtime_config["analyzers"].__dict__
         return runtime_config
 
