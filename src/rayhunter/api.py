@@ -42,7 +42,51 @@ class RayhunterApi:
             file_content.write(chunk)
         file_content.seek(0)
         return file_content.read()
+
+    def delete_all_recordings(self) -> bool:
+        """
+        Remove all saved data capture files.
+
+        :return: True if deletion was successful, else False
+        """
+        deletion_successful = False
+        api_endpoint = urllib.parse.urljoin(self._url, "/api/delete-all-recordings")
+        logging.info(f"Calling to delete all metadata: {api_endpoint}")
+        response = requests.post(api_endpoint)
+        if response.status_code == 202:
+            deletion_successful = True
+            logging.info("Deletion successful")
+        elif response.status_code == 403:
+            logging.error("Deletion action unsuccessful: device is in debug mode")
+        elif response.status_code == 500:
+            logging.error("Deletion action unsuccessful")
+        else:
+            logging.error(f"Unknown response code: {response.status_code}")
+        return deletion_successful
     
+    def delete_recording(self, filename: str) -> bool:
+        """
+        Remove a specific data capture file by name. Use `get_manifest` to identify available file names.
+
+        :param filename: The file to delete
+        :returns: True if deletion was successful, else False
+        """
+        deletion_successful = False
+        logging.info(f"Deleting QMDL file: {filename}")
+        deletion_url = urllib.parse.urljoin(self._url, f"/api/delete-recording/{filename}")
+        response = requests.post(deletion_url)
+        if response.status_code == 202:
+            deletion_successful = True
+        elif response.status_code == 400:
+            logging.error("Deletion action unsuccessful: bad recording name or no such recording")
+        elif response.status_code == 403:
+            logging.error("Deletion action unsuccessful: device is in debug mode")
+        elif response.status_code == 500:
+            logging.error("Deletion action unsuccessful")
+        else:
+            logging.error(f"Unknown response code: {response.status_code}")
+        return deletion_successful
+
     def get_analysis_status(self) -> AnalysisStatus:
         """
         Show analysis status for all QMDL files.
@@ -93,7 +137,7 @@ class RayhunterApi:
         """
         Fetch a copy of the given QMDL file. Use `get_manifest` to identify QMDL capture names.
 
-        :param filenae: The QMDL file name (found in manifest)
+        :param filename: The QMDL file name (found in manifest)
         :return: The contents of the QMDL file (bytes)
         """
         logging.info(f"Fetching QDML file for capture: {filename}")
