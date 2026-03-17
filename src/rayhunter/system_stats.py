@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 def _size_str_to_int(size: str) -> int:
@@ -12,6 +13,20 @@ def _size_str_to_int(size: str) -> int:
         raise ValueError(f"Unsupported size suffix: {size[-1]} ({size})")
     return int(float(size.rstrip("M")) * 1048576)
 
+
+@dataclass
+class BatteryState:
+
+    """
+    Device battery information.
+
+    Attributes:
+        is_plugged_in (bool): A boolean indicating whether the battery is currently being charged.
+        level (int): The current level in percentage of the device battery.
+    """
+
+    is_plugged_in: bool
+    level: int
 
 @dataclass
 class DiskStats:
@@ -68,7 +83,24 @@ class MemoryStats:
         for key in ["total", "used", "free"]:
             memory_stats[key] = _size_str_to_int(memory_stats[key])
         return MemoryStats(**memory_stats)
+
+
+@dataclass
+class RuntimeMetadata:
+
+    """
+    Expose binary and system information.
     
+    Attributes:
+        arch (str): The CPU architecture in use. e.g., "armv7l" or "arm".
+        rayhunter_version (str): The cargo package version from this library's cargo.toml, e.g., "1.2.3".
+        system_os (str): The operating system `sysname` and optionally `release`. e.g., "Linux 3.18.48" or "linux".
+    """
+
+    arch: str
+    rayhunter_version: str
+    system_os: str
+
 
 @dataclass
 class SystemStats:
@@ -76,17 +108,24 @@ class SystemStats:
     """Disk and memory utilization statistics for the underlying system, pulled from the Rayhunter API.
     
     Attributes:
+        battery_status (Optional[BatteryState]): Optionally included power information
         disk_stats (DiskStats): Information on the underlying disk
         memory_stats (MemoryStats): Information on system memory utilization
-
+        runtime_metadata (RuntimeMetadata): System and binary information 
     """
 
+    battery_status: Optional[BatteryState]
     disk_stats: DiskStats
     memory_stats: MemoryStats
+    runtime_metadata: RuntimeMetadata
 
     @staticmethod
     def from_dict(system_stats: dict):
+        if system_stats["battery_status"]:
+            system_stats["battery_status"] = BatteryState(**system_stats["battery_status"])
         return SystemStats(
+            battery_status=system_stats["battery_status"],
             disk_stats=DiskStats.from_dict(system_stats["disk_stats"]),
-            memory_stats=MemoryStats.from_dict(system_stats["memory_stats"])
+            memory_stats=MemoryStats.from_dict(system_stats["memory_stats"]),
+            runtime_metadata=RuntimeMetadata(**system_stats["runtime_metadata"])
         )
