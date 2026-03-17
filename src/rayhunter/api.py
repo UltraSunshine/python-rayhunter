@@ -3,8 +3,12 @@ import logging
 import requests
 import urllib.parse
 
+from .analysis import AnalysisStatus
+from .configuration import AnalyzerConfig, Config
 from .manifest import QmdlManifest
+from .reports import ReportMetadata
 from .system_stats import SystemStats
+from .time import TimeResponse
 
 
 class RayhunterApi:
@@ -38,6 +42,29 @@ class RayhunterApi:
             file_content.write(chunk)
         file_content.seek(0)
         return file_content.read()
+    
+    def get_analysis_status(self) -> AnalysisStatus:
+        """
+        Show analysis status for all QMDL files.
+
+        :return: An instance of `AnalysisStatus` populated from the target device.
+        """
+        analysis_status_url = urllib.parse.urljoin(self._url, "/api/analysis")
+        logging.info(f"Fetching analysis status from: {analysis_status_url}")
+        response = requests.get(analysis_status_url)
+        response.raise_for_status()
+        return AnalysisStatus.from_dict(response.json())
+
+    def get_analysis_report_file(self, filename: str) -> bytes:
+        """
+        Fetch a copy of the analysis report for a given capture. Use `get_manifest` to identify capture names.
+
+        :param filename: The capture file name
+        :return: The contents of the analysis report file (bytes)
+        """
+        logging.info(f"Fetching analysis report for capture: {filename}")
+        api_endpoint = f"/api/analysis-report/{filename}"
+        return self._get_file_content(api_endpoint)
 
     def get_manifest(self) -> QmdlManifest:
         """
@@ -50,17 +77,6 @@ class RayhunterApi:
         response = requests.get(manifest_url)
         response.raise_for_status()
         return QmdlManifest.from_dict(response.json())
-    
-    def get_analysis_report_file(self, filename: str) -> bytes:
-        """
-        Fetch a copy of the analysis report for a given capture. Use `get_manifest` to identify capture names.
-
-        :param filename: The capture file name
-        :return: The contents of the analysis report file (bytes)
-        """
-        logging.info(f"Fetching analysis report for capture: {filename}")
-        api_endpoint = f"/api/analysis-report/{filename}"
-        return self._get_file_content(api_endpoint)
     
     def get_pcap_file(self, filename: str) -> bytes:
         """
@@ -84,6 +100,18 @@ class RayhunterApi:
         api_endpoint = f"/api/qmdl/{filename}"
         return self._get_file_content(api_endpoint)
     
+    def get_system_stats(self):
+        """
+        Fetch disk and memory utilization stats from the API.
+        
+        :return: An instance of `SystemStats` populated from the target device.
+        """
+        system_stats_url = urllib.parse.urljoin(self._url, "/api/system-stats")
+        logging.info(f"Fetching system stats from: {system_stats_url}")
+        response = requests.get(system_stats_url)
+        response.raise_for_status()
+        return SystemStats.from_dict(response.json())
+
     def start_recording(self):
         """
         Start a new recording. Stops the active recording and starts a new one if this device is already recording.
@@ -101,15 +129,3 @@ class RayhunterApi:
         logging.info(f"Stopping recording with POST request to: {stop_recording_url}")
         response = requests.post(stop_recording_url)
         response.raise_for_status()
-
-    def system_stats(self):
-        """
-        Fetch disk and memory utilization stats from the API.
-        
-        :return: An instance of `SystemStats` populated from the target device.
-        """
-        system_stats_url = urllib.parse.urljoin(self._url, "/api/system-stats")
-        logging.info(f"Fetching system stats from: {system_stats_url}")
-        response = requests.get(system_stats_url)
-        response.raise_for_status()
-        return SystemStats.from_dict(response.json())
