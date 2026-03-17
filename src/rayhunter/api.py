@@ -200,6 +200,15 @@ class RayhunterApi:
         )
         response.raise_for_status()
 
+    def send_test_notification(self):
+        """
+        Send a test notification to the ntfy_url currently specified in the Rayhunter runtime configuration.
+        """
+        test_notification_url = urllib.parse.urljoin(self._url, "/api/test-notification")
+        logging.info(f"Triggering test notification using URL: {test_notification_url}")
+        response = requests.post(test_notification_url)
+        response.raise_for_status()
+
     def start_recording(self):
         """
         Start a new recording. Stops the active recording and starts a new one if this device is already recording.
