@@ -8,19 +8,24 @@ class QmdlManifestEntry:
     """Metadata for a single QMDL capture file.
 
     Attributes:
-        name (str): The name of the QMDL file.
-        start_time (str): The start time of this capture file.
+        arch (str): The architecture on which the OS was running.
         last_message_time (str): The timestamp of the last message captured in this file.
+        name (str): The name of the QMDL file.
         qmdl_size_bytes (int): The total size in bytes of this QMDL file.
-        analysis_size_bytes (int): The total size in bytes of the analysis file associated with this QMDL capture file.
-    
+        rayhunter_version (str): The rayhunter daemon version which generated the file.
+        start_time (str): The start time of this capture file.    
+        stop_reason (Optional[str]): The reason this capture was stopped, if it's stopped.
+        system_os (str): The OS version that created this file.
     """
 
-    name: str
-    start_time: str
+    arch: str
     last_message_time: str
+    name: str
     qmdl_size_bytes: int
-    analysis_size_bytes: int
+    rayhunter_version: str
+    start_time: str
+    stop_reason: Optional[str]
+    system_os: str
 
 
 @dataclass
