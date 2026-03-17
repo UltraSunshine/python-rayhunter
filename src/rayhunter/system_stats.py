@@ -28,6 +28,11 @@ class BatteryState:
     is_plugged_in: bool
     level: int
 
+    @staticmethod
+    def from_dict(battery_state: dict):
+        return BatteryState(**battery_state)
+
+
 @dataclass
 class DiskStats:
 
@@ -101,6 +106,10 @@ class RuntimeMetadata:
     rayhunter_version: str
     system_os: str
 
+    @staticmethod
+    def from_dict(runtime_metadata: dict):
+        return RuntimeMetadata(**runtime_metadata)
+
 
 @dataclass
 class SystemStats:
@@ -122,10 +131,10 @@ class SystemStats:
     @staticmethod
     def from_dict(system_stats: dict):
         if system_stats["battery_status"]:
-            system_stats["battery_status"] = BatteryState(**system_stats["battery_status"])
+            system_stats["battery_status"] = BatteryState.from_dict(system_stats["battery_status"])
         return SystemStats(
             battery_status=system_stats["battery_status"],
             disk_stats=DiskStats.from_dict(system_stats["disk_stats"]),
             memory_stats=MemoryStats.from_dict(system_stats["memory_stats"]),
-            runtime_metadata=RuntimeMetadata(**system_stats["runtime_metadata"])
+            runtime_metadata=RuntimeMetadata.from_dict(system_stats["runtime_metadata"])
         )
