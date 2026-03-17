@@ -41,21 +41,23 @@ class DiskStats:
     Size and percentage values are converted from string (e.g. 214.7M) to bytes (e.g. 225129267) for programmatic ease of use.
 
     Attributes:
+        available_bytes (Optional[int]): The amount of disk space currently available in bytes.
+        available_size (int): The amount of disk space currently available in bytes (e.g. 206884044).
+        mounted_on (str): The root folder to which the partition is mounted.
         partition (str): The partition Rayhunter is mounted on (e.g. ubi0:usrfs).
         total_size (int): Total size of the disk in bytes (e.g. 225129267).
+        used_percent (int): The percentage of disk space currently in use (e.g. 8).                
         used_size (int): The amount of disk space currently in use in bytes (e.g. 18350080).
-        available_size (int): The amount of disk space currently available in bytes (e.g. 206884044).
-        used_percent (int): The percentage of disk space currently in use (e.g. 8).
-        mounted_on (str): Rayhunter's mount point (e.g. /data).
 
     """
 
+    available_bytes: Optional[int]
+    available_size: int
+    mounted_on: str
     partition: str
     total_size: int
-    used_size: int
-    available_size: int
     used_percent: int
-    mounted_on: str
+    used_size: int
 
     @staticmethod
     def from_dict(disk_stats: dict):
