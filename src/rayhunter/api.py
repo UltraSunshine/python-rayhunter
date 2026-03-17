@@ -140,6 +140,15 @@ class RayhunterApi:
         response.raise_for_status()
         return Config.from_dict(response.json())
 
+    def get_log(self) -> bytes:
+        """
+        Download the current device log in UTF-8 plaintext.
+
+        :return: The contents of the device log (bytes).
+        """
+        target_url = urllib.parse.urljoin(self._url, "/api/log")
+        return self._get_file_content(target_url)
+
     def get_manifest(self) -> QmdlManifest:
         """
         Fetch a copy of the QMDL manifest, used to track the names of previous and active recordings.
@@ -209,6 +218,18 @@ class RayhunterApi:
         response = requests.get(time_url)
         response.raise_for_status()
         return response["offset_seconds"]
+
+    def get_zip(self, filename: str) -> bytes:
+        """
+        Download a ZIP file to the client which contains the QMDL file {name} and a PCAP generated from the same file. 
+        
+        Use `get_manifest` to identify valid filenames.
+
+        :param filename: QMDL filename to convert and download.
+        :return: A zip file containing the requested files.
+        """
+        target_url = urllib.parse.urljoin(self._url, f"/api/zip/{filename}")
+        return self._get_file_content(target_url)
 
     def set_config(self, config: Config):
         """
