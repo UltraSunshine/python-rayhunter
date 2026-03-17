@@ -206,18 +206,6 @@ class RayhunterApi:
         response = requests.get(time_url)
         response.raise_for_status()
         return TimeResponse.from_dict(response.json())
-    
-    def get_time_offset(self) -> int:
-        """
-        Get the difference (in seconds) between the system time and the adjusted time from the target device.
-
-        :return: The time offset in seconds retrieved from the target device.
-        """
-        time_url = urllib.parse.urljoin(self._url, "/api/time-offset")
-        logging.info(f"Fetching current system time offset from target url: {time_url}")
-        response = requests.get(time_url)
-        response.raise_for_status()
-        return response["offset_seconds"]
 
     def get_zip(self, filename: str) -> bytes:
         """

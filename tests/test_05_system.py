@@ -30,17 +30,6 @@ def test_get_time(api: RayhunterApi):
     print(f"\nTime — system: {response.system_time}, adjusted: {response.adjusted_time}, offset: {response.offset_seconds}s")
 
 
-def test_get_time_offset(api: RayhunterApi):
-    """Fetch the time offset from the device and verify it is an integer."""
-    offset = api.get_time_offset()
-
-    assert isinstance(offset, int), (
-        f"Expected get_time_offset() to return an int, got {type(offset).__name__}"
-    )
-
-    print(f"\nTime offset: {offset}s")
-
-
 def test_get_system_stats(api: RayhunterApi):
     """Fetch system stats from the device and verify all nested fields deserialize correctly."""
     stats = api.get_system_stats()
