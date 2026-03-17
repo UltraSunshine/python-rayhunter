@@ -174,7 +174,7 @@ class RayhunterApi:
         api_endpoint = f"/api/qmdl/{filename}"
         return self._get_file_content(api_endpoint)
     
-    def get_system_stats(self):
+    def get_system_stats(self) -> SystemStats:
         """
         Fetch disk and memory utilization stats from the API.
         
@@ -185,6 +185,30 @@ class RayhunterApi:
         response = requests.get(system_stats_url)
         response.raise_for_status()
         return SystemStats.from_dict(response.json())
+    
+    def get_time(self) -> TimeResponse:
+        """
+        Get the current time and offset (in seconds) from the target device.
+
+        :return: An instance of TimeResponse populated from the target device.
+        """
+        time_url = urllib.parse.urljoin(self._url, "/api/time")
+        logging.info(f"Fetching current system time from: {time_url}")
+        response = requests.get(time_url)
+        response.raise_for_status()
+        return TimeResponse.from_dict(response.json())
+    
+    def get_time_offset(self) -> int:
+        """
+        Get the difference (in seconds) between the system time and the adjusted time from the target device.
+
+        :return: The time offset in seconds retrieved from the target device.
+        """
+        time_url = urllib.parse.urljoin(self._url, "/api/time-offset")
+        logging.info(f"Fetching current system time offset from target url: {time_url}")
+        response = requests.get(time_url)
+        response.raise_for_status()
+        return response["offset_seconds"]
 
     def set_config(self, config: Config):
         """

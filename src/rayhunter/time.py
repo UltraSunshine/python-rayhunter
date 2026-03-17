@@ -16,3 +16,7 @@ class TimeResponse:
     adjusted_time: str
     offset_seconds: int
     system_time: str
+
+    @staticmethod
+    def from_dict(time_response: dict):
+        return TimeResponse(**time_response)
