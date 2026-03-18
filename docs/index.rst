@@ -9,13 +9,13 @@ Unofficial Python bindings for EFF's `Rayhunter <https://github.com/EFForg/rayhu
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    usage
    api/index
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
