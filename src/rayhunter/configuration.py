@@ -38,7 +38,7 @@ class Config:
         device (str): The internal device name.
         enabled_notifications (List[str]): A list containing the types of enabled notifications.
         key_input_mode (int): Lock or enable key inputs.
-        min_space_to_start_recording_mb: The minimum space (MB) needed to continue a recording.
+        min_space_to_continue_recording_mb: The minimum space (MB) needed to continue a recording.
         min_space_to_start_recording_mb: The minimum space (MB) needed to start a recording.
         port (int): The port number to listen on.
         qmdl_store_path (str): The absolute path Rayhunter stores QMDL files.
